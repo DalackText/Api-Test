@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+  <!-- Change dark to light -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+    <!-- Include the Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"
+      integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="flex">
+      <div class="sidebar h-full min-h-full">
+        <div class="sidebar-header">
+          <span>License</span>
+        </div>
+        <a href="index.html" class="nav-link"> <i class="fas fa-home"></i> Home </a>
+        <a href="check.html" class="nav-link">
+          <i class="far fa-comment"></i> Check
+        </a>
+      </div>
+
+      <div class="content">
+        <h1 class="section-title">Genuine License Check</h1>
+        <div class="mt-8 p-4 bg-zinc-800 rounded-lg shadow-md">
+          <div class="flex flex-col items-center justify-center text-center">
+            <h1 class="text-2xl mb-2">Check</h1>
+            <input type="text" class="form-input" placeholder="ID" id="key" />
+            <button class="form-button bg-violet-500" id="get-btn">Check</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <style>
+    body {
+      font-family: "Your Preferred Font", sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #1a1a1a;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      background-color: #333;
+      border-top-right-radius: 20px;
+    }
+
+    .sidebar-header span {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 12px 20px;
+      text-decoration: none;
+      color: #ccc;
+      transition: background-color 0.3s;
+    }
+
+    .nav-link:hover {
+      background-color: #333;
+    }
+
+    .content {
+      flex: 1;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #333;
+      border-radius: 5px;
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    .form-button {
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .form-button:hover {
+      background-color: #00994d;
+    }
+  </style>
+  <script>
+    const key = document.querySelector("#key");
+    const get_btn = document.querySelector("#get-btn");
+    function getDomain(url) {
+      // Remove protocol (http://, https://, etc.)
+      var withoutProtocol = url.replace(/^(.*:\/\/|www\.)/, "");
+
+      // Remove path and query string
+      var domain = withoutProtocol.replace(/\/.*$|\/?\?.*$/, "");
+
+      return domain;
+    }
+    function httpGet(theUrl) {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open("GET", theUrl, false); // false for synchronous request
+      xmlHttp.send(null);
+      return xmlHttp.responseText;
+    }
+    get_btn.addEventListener("click", () => {
+      let req = httpGet(
+        "https://" + getDomain(window.location.href) + "/check?key=" + key.value
+      );
+      console.log(req);
+      if (req === "Invalid Key") {
+        Swal.fire({
+          title: "Boykisser License",
+          text: "Invalid ID!",
+          icon: "error",
+        });
+      } else {
+        req = JSON.parse(req);
+        Swal.fire({
+          title: "Boykisser License",
+          text: `Valid!`,
+          footer: `Name: ${req.name}<br/>Age: ${req.age}`,
+          icon: "success",
+        });
+      }
+    });
+  </script>
+</html>
